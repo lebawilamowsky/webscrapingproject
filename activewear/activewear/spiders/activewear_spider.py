@@ -15,7 +15,10 @@ class ActivewearSpider(Spider):
 		try:
 			num_pages = int(response.xpath('//div[@class="at-z"]/text()').extract_first().split(' ')[2])
 		except:
-			num_pages = int(response.xpath('//div[@class="RG-z"]/text()').extract_first().split(' ')[2])
+			try:
+				num_pages = int(response.xpath('//div[@class="RG-z"]/text()').extract_first().split(' ')[2])
+			except:
+				num_pages = int(response.xpath('//span[@class="Mr-z"]/a[last()]/text()').extract_first())
 		
 		result_urls = [response.url + f'?p={i}' for i in range(num_pages)]
 		
@@ -33,7 +36,7 @@ class ActivewearSpider(Spider):
 				price = product.xpath('.//dd[@itemprop="offers"]/span[2]/text()').extract()[1]
 			except:
 				price = product.xpath('.//dd[@itemprop="offers"]/span[1]/text()').extract_first()
-			brand= product.xpath('//dd[@itemprop="brand"]/text()').extract_first()
+			brand= product.xpath('.//dd[@itemprop="brand"]/text()').extract_first()
 			item=ActivewearItem()
 			item['category']=response.meta['category']
 			item['brand']=brand
